@@ -58,7 +58,8 @@ class menuHandler
         MessageBubblesMenu,
         MeshTextMenu,
         MeshTextMyPagesMenu,
-        MeshTextAvailablePagesMenu
+        MeshTextAvailablePagesMenu,
+        MeshTextEditPagesMenu
     };
     static screenMenus menuQueue;
     static uint32_t pickedNodeNum; // node selected by NodePicker for ManageNodeMenu
@@ -117,6 +118,7 @@ class menuHandler
     static void meshTextMenu();
     static void meshTextMyPagesMenu();
     static void meshTextAvailablePagesMenu();
+    static void meshTextEditPagesMenu();
 
   private:
     static void saveUIConfig();

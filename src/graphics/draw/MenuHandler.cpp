@@ -29,6 +29,7 @@
 #include <utility>
 #include "mesh/meshtext/MeshTextStorage.h"
 #include "modules/MeshTextRadioModule.h"
+#include "mesh/meshtext/MeshTextAP.h"
 
 extern uint16_t TFT_MESH;
 
@@ -2371,19 +2372,21 @@ void menuHandler::meshTextMenu()
     static const char *optionsArray[] = {
         "Back",
         "My Pages",
-        "Available Pages"
+        "Available Pages",
+        "Edit Pages"
     };
 
     enum optionsNumbers {
         Back,
         MyPages,
-        AvailablePages
+        AvailablePages,
+        EditPages
     };
 
     BannerOverlayOptions bannerOptions;
     bannerOptions.message = "MeshText";
     bannerOptions.optionsArrayPtr = optionsArray;
-    bannerOptions.optionsCount = 3;
+    bannerOptions.optionsCount = 4;
     bannerOptions.bannerCallback = [](int selected) -> void {
         if (selected == MyPages) {
             menuHandler::menuQueue = menuHandler::MeshTextMyPagesMenu;
@@ -2391,8 +2394,35 @@ void menuHandler::meshTextMenu()
         } else if (selected == AvailablePages) {
             menuHandler::menuQueue = menuHandler::MeshTextAvailablePagesMenu;
             screen->runNow();
+        } else if (selected == EditPages) {
+            menuHandler::menuQueue = menuHandler::MeshTextEditPagesMenu;
+            screen->runNow();
         }
-        // Back = just close
+    };
+
+    screen->showOverlayBanner(bannerOptions);
+}
+
+void menuHandler::meshTextEditPagesMenu()
+{
+    bool ok = meshtext::startEditPagesAP();
+
+    static const char *optionsArray[] = {"Back"};
+
+    BannerOverlayOptions bannerOptions;
+    bannerOptions.optionsArrayPtr = optionsArray;
+    bannerOptions.optionsCount = 1;
+
+    if (ok) {
+        bannerOptions.message = "AP: meshtext\nPW: password123\nGo to /meshtext";
+    } else {
+        bannerOptions.message = "AP start failed";
+    }
+
+    bannerOptions.bannerCallback = [](int selected) -> void {
+        (void)selected;
+        menuHandler::menuQueue = menuHandler::MeshTextMenu;
+        screen->runNow();
     };
 
     screen->showOverlayBanner(bannerOptions);
@@ -2906,6 +2936,9 @@ void menuHandler::handleMenuSwitch(OLEDDisplay *display)
         break;
     case MeshTextAvailablePagesMenu:
         meshTextAvailablePagesMenu();
+        break;
+    case MeshTextEditPagesMenu:
+        meshTextEditPagesMenu();
         break;
     }
     menuQueue = MenuNone;
