@@ -4,6 +4,7 @@
 namespace meshtext {
 
 static uint8_t currentPageNum = 0;
+static RemotePageCache latestRemotePage = {};
 
 void setCurrentPage(uint8_t pageNum) {
     currentPageNum = pageNum;
@@ -179,6 +180,26 @@ uint8_t getRemoteSources(RemotePageSource *out, uint8_t maxEntries)
         }
     }
     return count;
+}
+
+void storeLatestRemotePage(uint32_t fromNode, const Page &page)
+{
+    latestRemotePage.valid = true;
+    latestRemotePage.fromNode = fromNode;
+    latestRemotePage.page = page;
+    latestRemotePage.receivedAtMs = millis();
+}
+
+bool getLatestRemotePage(RemotePageCache &out)
+{
+    if (!latestRemotePage.valid) return false;
+    out = latestRemotePage;
+    return true;
+}
+
+void clearLatestRemotePage()
+{
+    latestRemotePage.valid = false;
 }
 
 

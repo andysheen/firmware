@@ -32,6 +32,13 @@ struct RemotePageSource {
     bool active;
 };
 
+struct RemotePageCache {
+    bool valid;
+    uint32_t fromNode;
+    Page page;
+    uint32_t receivedAtMs;
+};
+
 inline constexpr int MAX_REMOTE_SOURCES = 16;
 
 void upsertRemoteSource(uint32_t fromNode,
@@ -42,7 +49,9 @@ void upsertRemoteSource(uint32_t fromNode,
                         int8_t channelIndex);
 
 uint8_t getRemoteSources(RemotePageSource *out, uint8_t maxEntries);
-
+void storeLatestRemotePage(uint32_t fromNode, const Page &page);
+bool getLatestRemotePage(RemotePageCache &out);
+void clearLatestRemotePage();
 bool ensurePagesDir();
 bool loadPage(uint8_t num, Page &page);
 bool savePage(uint8_t num, const Page &page);

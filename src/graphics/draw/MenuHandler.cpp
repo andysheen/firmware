@@ -28,6 +28,7 @@
 #include <functional>
 #include <utility>
 #include "mesh/meshtext/MeshTextStorage.h"
+#include "modules/MeshTextRadioModule.h"
 
 extern uint16_t TFT_MESH;
 
@@ -2457,11 +2458,20 @@ void menuHandler::meshTextAvailablePagesMenu()
     bannerOptions.optionsArrayPtr = labels;
     bannerOptions.optionsCount = count + 1;
     bannerOptions.bannerCallback = [](int selected) -> void {
-        if (selected == 0) {
-            menuHandler::menuQueue = menuHandler::MeshTextMenu;
-            screen->runNow();
-        }
-    };
+    if (selected == 0) {
+        menuHandler::menuQueue = menuHandler::MeshTextMenu;
+        screen->runNow();
+        return;
+    }
+
+    uint8_t idx = selected - 1;
+    if (idx < meshtext::MAX_REMOTE_SOURCES && meshTextRadioModule) {
+        meshTextRadioModule->requestPage(rem[idx].fromNode, rem[idx].first_page);
+    }
+
+    menuHandler::menuQueue = menuHandler::MeshTextMenu;
+    screen->runNow();
+};
 
     screen->showOverlayBanner(bannerOptions);
 }

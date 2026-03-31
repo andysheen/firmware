@@ -162,10 +162,17 @@ void drawMeshTextFrame(OLEDDisplay *display, OLEDDisplayUiState *state, int16_t 
     (void)x;
     (void)y;
 
+    meshtext::RemotePageCache remote{};
+    if (meshtext::getLatestRemotePage(remote)) {
+        meshtext::ReactTally tally{};
+        meshtext::drawPage(display, remote.page, &tally, -1);
+        return;
+    }
+
     meshtext::Page page{};
     bool ok = false;
 
-   uint8_t currentPage = meshtext::getCurrentPage();
+    uint8_t currentPage = meshtext::getCurrentPage();
 
     if (currentPage != 0) {
         ok = meshtext::loadPage(currentPage, page);
@@ -188,7 +195,6 @@ void drawMeshTextFrame(OLEDDisplay *display, OLEDDisplayUiState *state, int16_t 
     meshtext::ReactTally tally{};
     meshtext::drawPage(display, page, &tally, -1);
 }
-
 
 // ****************************
 // * WiFi Screen              *
