@@ -701,6 +701,7 @@ class Screen : public concurrency::OSThread
             uint8_t firstFavorite = 255;
             uint8_t lastFavorite = 255;
             uint8_t lora = 255;
+            uint8_t meshtext = 255;
         } positions;
 
         uint8_t frameCount = 0;
@@ -713,6 +714,7 @@ class Screen : public concurrency::OSThread
         bool system = false;
         bool home = false;
         bool clock = false;
+        bool meshtext = false;
 #ifndef USE_EINK
         bool nodelist_nodes = false;
         bool nodelist_location = false;

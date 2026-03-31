@@ -1124,6 +1124,11 @@ void Screen::setFrames(FrameFocus focus)
         normalFrames[numframes++] = graphics::DebugRenderer::drawSystemScreen;
         indicatorIcons.push_back(icon_system);
     }
+    if (!hiddenFrames.meshtext) {
+        fsi.positions.meshtext = numframes;
+        normalFrames[numframes++] = graphics::DebugRenderer::drawMeshTextFrame;
+        indicatorIcons.push_back(icon_radio);   // reuse an existing icon for now
+    }
 #if !defined(DISPLAY_CLOCK_FRAME)
     if (!hiddenFrames.clock) {
         fsi.positions.clock = numframes;

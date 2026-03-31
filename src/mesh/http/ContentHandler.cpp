@@ -21,6 +21,8 @@
 #include "esp_task_wdt.h"
 #endif
 
+#include "mesh/meshtext/MeshTextWeb.h"
+
 /*
   Including the esp32_https_server library will trigger a compile time error. I've
   tracked it down to a reoccurrance of this bug:
@@ -110,6 +112,7 @@ void registerHandlers(HTTPServer *insecureServer, HTTPSServer *secureServer)
     secureServer->registerNode(nodeJsonNodes);
     //    secureServer->registerNode(nodeUpdateFs);
     //    secureServer->registerNode(nodeDeleteFs);
+    meshtext::registerRoutes(secureServer);
     secureServer->registerNode(nodeAdmin);
     //    secureServer->registerNode(nodeAdminFs);
     //    secureServer->registerNode(nodeAdminSettings);
@@ -131,6 +134,7 @@ void registerHandlers(HTTPServer *insecureServer, HTTPSServer *secureServer)
     insecureServer->registerNode(nodeJsonReport);
     //    insecureServer->registerNode(nodeUpdateFs);
     //    insecureServer->registerNode(nodeDeleteFs);
+        meshtext::registerRoutes(insecureServer);
     insecureServer->registerNode(nodeAdmin);
     //    insecureServer->registerNode(nodeAdminFs);
     //    insecureServer->registerNode(nodeAdminSettings);

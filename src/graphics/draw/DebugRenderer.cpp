@@ -150,6 +150,20 @@ void drawFrame(OLEDDisplay *display, OLEDDisplayUiState *state, int16_t x, int16
     heartbeat = !heartbeat;
 #endif
 }
+//*****************************
+// * Mesh Text
+//***************************** 
+void drawMeshTextFrame(OLEDDisplay *display, OLEDDisplayUiState *state, int16_t x, int16_t y)
+{
+    display->setTextAlignment(TEXT_ALIGN_CENTER);
+
+    display->setFont(FONT_SMALL);
+    display->drawString(x + 64, y + 10, "MeshText");
+
+    display->setFont(FONT_MEDIUM);
+    display->drawString(x + 64, y + 28, "HELLO!");
+}
+
 
 // ****************************
 // * WiFi Screen              *
