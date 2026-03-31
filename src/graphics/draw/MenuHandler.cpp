@@ -27,6 +27,7 @@
 #include <array>
 #include <functional>
 #include <utility>
+#include "mesh/meshtext/MeshTextStorage.h"
 
 extern uint16_t TFT_MESH;
 
@@ -35,6 +36,14 @@ namespace graphics
 
 namespace
 {
+
+struct RemoteMeshTextPageInfo {
+    uint32_t fromNodeNum;
+    uint8_t pageNum;
+    char title[16];
+};
+
+static std::vector<RemoteMeshTextPageInfo> meshTextRemotePages;
 
 // Caller must ensure the provided options array outlives the banner callback.
 template <typename T, size_t N, typename Callback>
@@ -2356,6 +2365,106 @@ void menuHandler::screenOptionsMenu()
     };
     screen->showOverlayBanner(bannerOptions);
 }
+void menuHandler::meshTextMenu()
+{
+    static const char *optionsArray[] = {
+        "Back",
+        "My Pages",
+        "Available Pages"
+    };
+
+    enum optionsNumbers {
+        Back,
+        MyPages,
+        AvailablePages
+    };
+
+    BannerOverlayOptions bannerOptions;
+    bannerOptions.message = "MeshText";
+    bannerOptions.optionsArrayPtr = optionsArray;
+    bannerOptions.optionsCount = 3;
+    bannerOptions.bannerCallback = [](int selected) -> void {
+        if (selected == MyPages) {
+            menuHandler::menuQueue = menuHandler::MeshTextMyPagesMenu;
+            screen->runNow();
+        } else if (selected == AvailablePages) {
+            menuHandler::menuQueue = menuHandler::MeshTextAvailablePagesMenu;
+            screen->runNow();
+        }
+        // Back = just close
+    };
+
+    screen->showOverlayBanner(bannerOptions);
+}
+
+void menuHandler::meshTextMyPagesMenu()
+{
+    static constexpr uint8_t MAX_LOCAL_PAGES = 16;
+    static meshtext::PageListEntry pageList[MAX_LOCAL_PAGES];
+    static const char *labels[MAX_LOCAL_PAGES + 1];
+
+    uint8_t count = meshtext::listPages(pageList, MAX_LOCAL_PAGES);
+
+    labels[0] = "Back";
+    for (uint8_t i = 0; i < count; ++i) {
+        labels[i + 1] = pageList[i].title[0] ? pageList[i].title : "Untitled";
+    }
+
+    BannerOverlayOptions bannerOptions;
+    bannerOptions.message = "My Pages";
+    bannerOptions.optionsArrayPtr = labels;
+    bannerOptions.optionsCount = count + 1;
+    bannerOptions.bannerCallback = [count](int selected) -> void {
+        if (selected == 0) {
+            menuHandler::menuQueue = menuHandler::MeshTextMenu;
+            screen->runNow();
+            return;
+        }
+
+        uint8_t idx = selected - 1;
+        if (idx < count) {
+            meshtext::setCurrentPage(pageList[idx].page_num);
+            // If your MeshText frame reads from a shared current-page getter,
+            // call that instead:
+            // meshtext::setCurrentPage(pageList[idx].page_num);
+
+            screen->runNow();
+        }
+    };
+
+    screen->showOverlayBanner(bannerOptions);
+}
+
+void menuHandler::meshTextAvailablePagesMenu()
+{
+    static meshtext::RemotePageSource rem[meshtext::MAX_REMOTE_SOURCES];
+    static const char *labels[meshtext::MAX_REMOTE_SOURCES + 1];
+    static char labelBuf[meshtext::MAX_REMOTE_SOURCES][24];
+
+    uint8_t count = meshtext::getRemoteSources(rem, meshtext::MAX_REMOTE_SOURCES);
+
+    labels[0] = "Back";
+    for (uint8_t i = 0; i < count; ++i) {
+        snprintf(labelBuf[i], sizeof(labelBuf[i]), "%s %u-%u",
+                 rem[i].name[0] ? rem[i].name : "Node",
+                 rem[i].first_page,
+                 rem[i].last_page);
+        labels[i + 1] = labelBuf[i];
+    }
+
+    BannerOverlayOptions bannerOptions;
+    bannerOptions.message = "Available Pages";
+    bannerOptions.optionsArrayPtr = labels;
+    bannerOptions.optionsCount = count + 1;
+    bannerOptions.bannerCallback = [](int selected) -> void {
+        if (selected == 0) {
+            menuHandler::menuQueue = menuHandler::MeshTextMenu;
+            screen->runNow();
+        }
+    };
+
+    screen->showOverlayBanner(bannerOptions);
+}
 
 void menuHandler::powerMenu()
 {
@@ -2781,6 +2890,15 @@ void menuHandler::handleMenuSwitch(OLEDDisplay *display)
         break;
     case MessageBubblesMenu:
         messageBubblesMenu();
+        break;
+    case MeshTextMenu:
+        meshTextMenu();
+        break;
+    case MeshTextMyPagesMenu:
+        meshTextMyPagesMenu();
+        break;
+    case MeshTextAvailablePagesMenu:
+        meshTextAvailablePagesMenu();
         break;
     }
     menuQueue = MenuNone;

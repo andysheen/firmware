@@ -16,10 +16,42 @@ struct Page {
     char title[16];
 };
 
+struct PageListEntry {
+    uint8_t page_num;
+    char title[16];
+};
+
+struct RemotePageSource {
+    uint32_t fromNode;
+    char name[16];
+    uint8_t page_count;
+    uint8_t first_page;
+    uint8_t last_page;
+    int8_t channelIndex;
+    uint32_t lastSeenMs;
+    bool active;
+};
+
+inline constexpr int MAX_REMOTE_SOURCES = 16;
+
+void upsertRemoteSource(uint32_t fromNode,
+                        const char *name,
+                        uint8_t pageCount,
+                        uint8_t firstPage,
+                        uint8_t lastPage,
+                        int8_t channelIndex);
+
+uint8_t getRemoteSources(RemotePageSource *out, uint8_t maxEntries);
+
 bool ensurePagesDir();
 bool loadPage(uint8_t num, Page &page);
 bool savePage(uint8_t num, const Page &page);
 bool getFirstPageNumber(uint8_t &pageNum);
 bool loadFirstPage(Page &page);
+uint8_t listPages(PageListEntry *list, uint8_t maxEntries);
+
+// optional but recommended now
+void setCurrentPage(uint8_t pageNum);
+uint8_t getCurrentPage();
 
 }

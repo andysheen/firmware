@@ -163,10 +163,24 @@ void drawMeshTextFrame(OLEDDisplay *display, OLEDDisplayUiState *state, int16_t 
     (void)y;
 
     meshtext::Page page{};
-    if (!meshtext::loadFirstPage(page)) {
+    bool ok = false;
+
+   uint8_t currentPage = meshtext::getCurrentPage();
+
+    if (currentPage != 0) {
+        ok = meshtext::loadPage(currentPage, page);
+    }
+
+    if (!ok) {
+        ok = meshtext::loadFirstPage(page);
+        if (ok) {
+            meshtext::setCurrentPage(page.page_num);
+        }
+    }
+
+    if (!ok) {
         display->setTextAlignment(TEXT_ALIGN_CENTER);
-        display->setFont(FONT_SMALL);
-        display->drawString(64, 14, "MeshText");
+        display->drawString(64, 16, "MeshText");
         display->drawString(64, 30, "No pages");
         return;
     }

@@ -63,52 +63,6 @@ static bool saveMeshTextConfig(const MeshTextConfig &cfg) {
     return written == out.length();
 }
 
-struct PageListEntry {
-    uint8_t page_num;
-    char title[16];
-};
-
-
-static void pagePath(uint8_t num, char *buf, size_t len) {
-    snprintf(buf, len, "/pages/%03u.bin", num);
-}
-
-static uint8_t listPages(PageListEntry *list, uint8_t maxEntries) {
-    File dir = FSCom.open("/pages");
-    if (!dir || !dir.isDirectory()) return 0;
-
-    uint8_t count = 0;
-    File f = dir.openNextFile();
-
-    while (f && count < maxEntries) {
-        if (f.size() == sizeof(Page)) {
-            Page p{};
-            if (f.read(reinterpret_cast<uint8_t *>(&p), sizeof(Page)) == sizeof(Page)) {
-                list[count].page_num = p.page_num;
-                memcpy(list[count].title, p.title, sizeof(list[count].title));
-                list[count].title[sizeof(list[count].title) - 1] = '\0';
-                count++;
-            }
-        }
-        f.close();
-        f = dir.openNextFile();
-    }
-
-    dir.close();
-
-    for (uint8_t i = 1; i < count; i++) {
-        PageListEntry tmp = list[i];
-        int j = i - 1;
-        while (j >= 0 && list[j].page_num > tmp.page_num) {
-            list[j + 1] = list[j];
-            j--;
-        }
-        list[j + 1] = tmp;
-    }
-
-    return count;
-}
-
 static void handleEditor(HTTPRequest *req, HTTPResponse *res) {
     (void)req;
 

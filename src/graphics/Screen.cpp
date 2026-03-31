@@ -1783,6 +1783,8 @@ int Screen::handleInputEvent(const InputEvent *event)
                     menuHandler::homeBaseMenu();
                 } else if (this->ui->getUiState()->currentFrame == framesetInfo.positions.system) {
                     menuHandler::systemBaseMenu();
+                } else if (this->ui->getUiState()->currentFrame == framesetInfo.positions.meshtext) {
+                    menuHandler::meshTextMenu();
 #if HAS_GPS
                 } else if (this->ui->getUiState()->currentFrame == framesetInfo.positions.gps && gps) {
                     menuHandler::positionBaseMenu();
