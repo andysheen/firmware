@@ -2425,10 +2425,7 @@ void menuHandler::meshTextMyPagesMenu()
         uint8_t idx = selected - 1;
         if (idx < count) {
             meshtext::setCurrentPage(pageList[idx].page_num);
-            // If your MeshText frame reads from a shared current-page getter,
-            // call that instead:
-            // meshtext::setCurrentPage(pageList[idx].page_num);
-
+            meshtext::clearLatestRemotePage();   // <- important
             screen->runNow();
         }
     };
