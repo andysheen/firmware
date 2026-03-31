@@ -33,6 +33,9 @@
 #include <RadioLibInterface.h>
 #include <target_specific.h>
 
+#include "mesh/meshtext/MeshTextStorage.h"
+#include "mesh/meshtext/MeshTextRenderer.h"
+
 using namespace meshtastic;
 
 // External variables
@@ -155,13 +158,21 @@ void drawFrame(OLEDDisplay *display, OLEDDisplayUiState *state, int16_t x, int16
 //***************************** 
 void drawMeshTextFrame(OLEDDisplay *display, OLEDDisplayUiState *state, int16_t x, int16_t y)
 {
-    display->setTextAlignment(TEXT_ALIGN_CENTER);
+    (void)state;
+    (void)x;
+    (void)y;
 
-    display->setFont(FONT_SMALL);
-    display->drawString(x + 64, y + 10, "MeshText");
+    meshtext::Page page{};
+    if (!meshtext::loadFirstPage(page)) {
+        display->setTextAlignment(TEXT_ALIGN_CENTER);
+        display->setFont(FONT_SMALL);
+        display->drawString(64, 14, "MeshText");
+        display->drawString(64, 30, "No pages");
+        return;
+    }
 
-    display->setFont(FONT_MEDIUM);
-    display->drawString(x + 64, y + 28, "HELLO!");
+    meshtext::ReactTally tally{};
+    meshtext::drawPage(display, page, &tally, -1);
 }
 
 

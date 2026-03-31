@@ -1,7 +1,7 @@
 #include "MeshTextWeb.h"
 #include "meshtext_editor_html_gz.h"
 #include "NodeDB.h"
-
+#include "mesh/meshtext/MeshTextStorage.h"
 #include <ArduinoJson.h>
 #include <FSCommon.h> 
 #include <string>
@@ -10,11 +10,6 @@
 using namespace httpsserver;
 
 namespace meshtext {
-
-static constexpr int PAGE_COLS = 20;
-static constexpr int PAGE_ROWS = 8;
-static constexpr int PAGE_CELLS = PAGE_COLS * PAGE_ROWS;
-static constexpr int MAX_PAGES = 32;
 
 struct MeshTextConfig {
     int category = 0;
@@ -68,56 +63,14 @@ static bool saveMeshTextConfig(const MeshTextConfig &cfg) {
     return written == out.length();
 }
 
-struct Page {
-    uint8_t cells[PAGE_CELLS];
-    uint8_t page_num;
-    uint8_t flags;
-    char title[16];
-};
-
 struct PageListEntry {
     uint8_t page_num;
     char title[16];
 };
 
-static void ensurePagesDir() {
-    if (!FSCom.exists("/pages")) {
-        FSCom.mkdir("/pages");
-    }
-}
 
 static void pagePath(uint8_t num, char *buf, size_t len) {
     snprintf(buf, len, "/pages/%03u.bin", num);
-}
-
-static bool savePage(uint8_t num, const Page &page) {
-    char path[24];
-    pagePath(num, path, sizeof(path));
-
-    File f = FSCom.open(path, "w");
-    if (!f) return false;
-
-    size_t n = f.write(reinterpret_cast<const uint8_t *>(&page), sizeof(Page));
-    f.close();
-
-    return n == sizeof(Page);
-}
-
-static bool loadPage(uint8_t num, Page &page) {
-    char path[24];
-    pagePath(num, path, sizeof(path));
-
-    File f = FSCom.open(path, "r");
-    if (!f) return false;
-
-    if (f.size() != sizeof(Page)) {
-        f.close();
-        return false;
-    }
-
-    size_t n = f.read(reinterpret_cast<uint8_t *>(&page), sizeof(Page));
-    f.close();
-    return n == sizeof(Page);
 }
 
 static uint8_t listPages(PageListEntry *list, uint8_t maxEntries) {
