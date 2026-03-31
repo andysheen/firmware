@@ -59,8 +59,9 @@ bool getFirstPageNumber(uint8_t &pageNum);
 bool loadFirstPage(Page &page);
 uint8_t listPages(PageListEntry *list, uint8_t maxEntries);
 
-// optional but recommended now
 void setCurrentPage(uint8_t pageNum);
 uint8_t getCurrentPage();
+
+bool ensureDefaultWelcomePage();
 
 }
