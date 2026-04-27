@@ -243,6 +243,29 @@ int32_t WebServerThread::runOnce()
     return getAdaptiveInterval();
 }
 
+void initHttpOnlyWebServer()
+{
+    LOG_DEBUG("Init HTTP-only Web Server");
+
+    if (isWebServerReady) {
+        LOG_INFO("Web server already running");
+        return;
+    }
+
+    insecureServer = new HTTPServer();
+    registerHandlers(insecureServer, nullptr);
+
+    LOG_INFO("Start Insecure Web Server");
+    insecureServer->start();
+
+    if (insecureServer->isRunning()) {
+        LOG_INFO("HTTP-only Web Server Ready!");
+        isWebServerReady = true;
+    } else {
+        LOG_ERROR("HTTP-only Web Server Failed!");
+    }
+}
+
 void initWebServer()
 {
     LOG_DEBUG("Init Web Server");

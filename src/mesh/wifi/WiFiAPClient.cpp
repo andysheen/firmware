@@ -454,6 +454,7 @@ static void WiFiEvent(WiFiEvent_t event)
 #ifdef WIFI_LED
         digitalWrite(WIFI_LED, HIGH);
 #endif
+        onNetworkConnected();
         break;
     case ARDUINO_EVENT_WIFI_AP_STOP:
         LOG_INFO("WiFi access point stopped");

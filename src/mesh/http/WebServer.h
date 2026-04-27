@@ -7,6 +7,7 @@
 
 void initWebServer();
 void createSSLCert();
+void initHttpOnlyWebServer();
 
 class WebServerThread : private concurrency::OSThread
 {
