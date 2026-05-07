@@ -242,6 +242,10 @@ bool isWifiAvailable()
     } else if (WiFi.status() == WL_CONNECTED) {
         // it's likely we have wifi now, but user intends to turn it off in config!
         return true;
+#ifdef ARCH_ESP32
+    } else if (WiFi.getMode() & WIFI_AP) {
+        return true;
+#endif
 #endif
     } else {
         return false;

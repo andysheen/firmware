@@ -18,6 +18,7 @@ class WebServerThread : private concurrency::OSThread
     WebServerThread();
     uint32_t requestRestart = 0;
     void markActivity();
+    void wake();
 
   protected:
     virtual int32_t runOnce() override;

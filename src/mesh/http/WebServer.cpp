@@ -208,6 +208,12 @@ void WebServerThread::markActivity()
     lastActivityTime = millis();
 }
 
+void WebServerThread::wake()
+{
+    enabled = true;
+    setIntervalFromNow(0);
+}
+
 int32_t WebServerThread::getAdaptiveInterval()
 {
     uint32_t currentTime = millis();
@@ -230,7 +236,7 @@ int32_t WebServerThread::getAdaptiveInterval()
 
 int32_t WebServerThread::runOnce()
 {
-    if (!config.network.wifi_enabled && !config.network.eth_enabled) {
+    if (!isWebServerReady && !config.network.wifi_enabled && !config.network.eth_enabled) {
         disable();
     }
 
@@ -261,6 +267,10 @@ void initHttpOnlyWebServer()
     if (insecureServer->isRunning()) {
         LOG_INFO("HTTP-only Web Server Ready!");
         isWebServerReady = true;
+        if (!webServerThread) {
+            webServerThread = new WebServerThread();
+        }
+        webServerThread->wake();
     } else {
         LOG_ERROR("HTTP-only Web Server Failed!");
     }

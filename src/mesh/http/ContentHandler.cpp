@@ -97,27 +97,29 @@ void registerHandlers(HTTPServer *insecureServer, HTTPSServer *secureServer)
     ResourceNode *nodeRoot = new ResourceNode("/*", "GET", &handleStatic);
 
     // Secure nodes
-    secureServer->registerNode(nodeAPIv1ToRadioOptions);
-    secureServer->registerNode(nodeAPIv1ToRadio);
-    secureServer->registerNode(nodeAPIv1FromRadioOptions);
-    secureServer->registerNode(nodeAPIv1FromRadio);
-    //    secureServer->registerNode(nodeHotspotApple);
-    //    secureServer->registerNode(nodeHotspotAndroid);
-    secureServer->registerNode(nodeRestart);
-    secureServer->registerNode(nodeFormUpload);
-    secureServer->registerNode(nodeJsonScanNetworks);
-    secureServer->registerNode(nodeJsonFsBrowseStatic);
-    secureServer->registerNode(nodeJsonDelete);
-    secureServer->registerNode(nodeJsonReport);
-    secureServer->registerNode(nodeJsonNodes);
-    //    secureServer->registerNode(nodeUpdateFs);
-    //    secureServer->registerNode(nodeDeleteFs);
-    meshtext::registerRoutes(secureServer);
-    secureServer->registerNode(nodeAdmin);
-    //    secureServer->registerNode(nodeAdminFs);
-    //    secureServer->registerNode(nodeAdminSettings);
-    //    secureServer->registerNode(nodeAdminSettingsApply);
-    secureServer->registerNode(nodeRoot); // This has to be last
+    if (secureServer) {
+        secureServer->registerNode(nodeAPIv1ToRadioOptions);
+        secureServer->registerNode(nodeAPIv1ToRadio);
+        secureServer->registerNode(nodeAPIv1FromRadioOptions);
+        secureServer->registerNode(nodeAPIv1FromRadio);
+        //    secureServer->registerNode(nodeHotspotApple);
+        //    secureServer->registerNode(nodeHotspotAndroid);
+        secureServer->registerNode(nodeRestart);
+        secureServer->registerNode(nodeFormUpload);
+        secureServer->registerNode(nodeJsonScanNetworks);
+        secureServer->registerNode(nodeJsonFsBrowseStatic);
+        secureServer->registerNode(nodeJsonDelete);
+        secureServer->registerNode(nodeJsonReport);
+        secureServer->registerNode(nodeJsonNodes);
+        //    secureServer->registerNode(nodeUpdateFs);
+        //    secureServer->registerNode(nodeDeleteFs);
+        meshtext::registerRoutes(secureServer);
+        secureServer->registerNode(nodeAdmin);
+        //    secureServer->registerNode(nodeAdminFs);
+        //    secureServer->registerNode(nodeAdminSettings);
+        //    secureServer->registerNode(nodeAdminSettingsApply);
+        secureServer->registerNode(nodeRoot); // This has to be last
+    }
 
     // Insecure nodes
     insecureServer->registerNode(nodeAPIv1ToRadioOptions);
@@ -134,7 +136,7 @@ void registerHandlers(HTTPServer *insecureServer, HTTPSServer *secureServer)
     insecureServer->registerNode(nodeJsonReport);
     //    insecureServer->registerNode(nodeUpdateFs);
     //    insecureServer->registerNode(nodeDeleteFs);
-        meshtext::registerRoutes(insecureServer);
+    meshtext::registerRoutes(insecureServer);
     insecureServer->registerNode(nodeAdmin);
     //    insecureServer->registerNode(nodeAdminFs);
     //    insecureServer->registerNode(nodeAdminSettings);
