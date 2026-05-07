@@ -47,6 +47,7 @@
 #include "freertosinc.h"
 #if !MESHTASTIC_EXCLUDE_WEBSERVER
 #include "mesh/http/WebServer.h"
+#include "mesh/meshtext/MeshTextAP.h"
 #endif
 #if !MESHTASTIC_EXCLUDE_BLUETOOTH
 #include "nimble/NimbleBluetooth.h"
@@ -982,6 +983,7 @@ void setup()
 #if defined(ARCH_ESP32) && !MESHTASTIC_EXCLUDE_WEBSERVER
     // Start web server thread.
     webServerThread = new WebServerThread();
+    meshtext::startEditPagesAPIfRequested();
 #endif
 
 #ifdef ARCH_PORTDUINO

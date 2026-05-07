@@ -1,6 +1,13 @@
 #pragma once
 
 namespace meshtext {
-bool startEditPagesAP();
+enum class EditPagesAPStartResult {
+    Started,
+    Rebooting,
+    Failed,
+};
+
+EditPagesAPStartResult startEditPagesAP();
+bool startEditPagesAPIfRequested();
 bool isEditPagesAPActive();
 }

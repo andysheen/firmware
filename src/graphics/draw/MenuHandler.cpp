@@ -2405,7 +2405,7 @@ void menuHandler::meshTextMenu()
 
 void menuHandler::meshTextEditPagesMenu()
 {
-    bool ok = meshtext::startEditPagesAP();
+    meshtext::EditPagesAPStartResult result = meshtext::startEditPagesAP();
 
     static const char *optionsArray[] = {"Back"};
 
@@ -2413,8 +2413,10 @@ void menuHandler::meshTextEditPagesMenu()
     bannerOptions.optionsArrayPtr = optionsArray;
     bannerOptions.optionsCount = 1;
 
-    if (ok) {
+    if (result == meshtext::EditPagesAPStartResult::Started) {
         bannerOptions.message = "AP: meshtext\nPW: password123\nGo to /meshtext";
+    } else if (result == meshtext::EditPagesAPStartResult::Rebooting) {
+        bannerOptions.message = "Starting editor AP\nRebooting...";
     } else {
         bannerOptions.message = "AP start failed";
     }
