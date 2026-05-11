@@ -2414,7 +2414,9 @@ void menuHandler::meshTextEditPagesMenu()
     bannerOptions.optionsCount = 1;
 
     if (result == meshtext::EditPagesAPStartResult::Started) {
-        bannerOptions.message = "AP: meshtext\nPW: password123\nGo to /meshtext";
+        static char message[64];
+        snprintf(message, sizeof(message), "AP: %s\nGo to /meshtext", meshtext::getEditPagesAPSSID());
+        bannerOptions.message = message;
     } else if (result == meshtext::EditPagesAPStartResult::Rebooting) {
         bannerOptions.message = "Starting editor AP\nRebooting...";
     } else {
@@ -2423,6 +2425,7 @@ void menuHandler::meshTextEditPagesMenu()
 
     bannerOptions.bannerCallback = [](int selected) -> void {
         (void)selected;
+        meshtext::stopEditPagesAP();
         menuHandler::menuQueue = menuHandler::MeshTextMenu;
         screen->runNow();
     };

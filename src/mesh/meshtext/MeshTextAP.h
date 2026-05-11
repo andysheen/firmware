@@ -9,5 +9,7 @@ enum class EditPagesAPStartResult {
 
 EditPagesAPStartResult startEditPagesAP();
 bool startEditPagesAPIfRequested();
+void stopEditPagesAP();
 bool isEditPagesAPActive();
+const char *getEditPagesAPSSID();
 }
